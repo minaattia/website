@@ -12,6 +12,15 @@
     
     
     <item>
+      <title>Resume</title>
+      <link>/resume/resume/</link>
+      <pubDate>Sun, 15 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/resume/resume/</guid>
+      <description>My name is Mina Attia and I was born in Alexandria, Egypt. At age 11, I immigrated to the US and have been residing in Texas. My edcuational background is concentrated in the biological sciences and business. My interests include medicine, entrepreneurship, and politics. My work experience includes pharmacokinetics research, phlebotomy, and retail. My skills range from being trilingual (Arabic, English, French) to my ability to teamwork effectively. Some of my accomplishments include research and educational awards.</description>
+    </item>
+    
+    <item>
       <title>RStudio and Python</title>
       <link>/blog/rstudio-and-python/</link>
       <pubDate>Sun, 15 Dec 2019 00:00:00 +0000</pubDate>

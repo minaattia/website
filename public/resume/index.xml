@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Resumes on Mina Attia</title>
+    <link>/resume/</link>
+    <description>Recent content in Resumes on Mina Attia</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Sun, 15 Dec 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/resume/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Resume</title>
+      <link>/resume/resume/</link>
+      <pubDate>Sun, 15 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/resume/resume/</guid>
+      <description>My name is Mina Attia and I was born in Alexandria, Egypt. At age 11, I immigrated to the US and have been residing in Texas. My edcuational background is concentrated in the biological sciences and business. My interests include medicine, entrepreneurship, and politics. My work experience includes pharmacokinetics research, phlebotomy, and retail. My skills range from being trilingual (Arabic, English, French) to my ability to teamwork effectively. Some of my accomplishments include research and educational awards.</description>
+    </item>
+    
+  </channel>
+</rss>

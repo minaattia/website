@@ -11,7 +11,7 @@ theme = "hugo-sustain"
   post = "/:year/:month/:day/:slug"
 
 [params]
-  avatar = "mina.jpg"
+  avatar = "pic.jpg"
   author = "Mina Attia"
   description = "Describe your website"
 
@@ -20,9 +20,8 @@ theme = "hugo-sustain"
   custom_js  = []
 
 [params.social]
-  Github        = "username"
-  Email         = "email@example.com"
-  LinkedIn      = "username"
+  Github        = "minaattia"
+  Email         = "attiamha@gmail.com"
 
 ## Main Menu
 [[menu.main]]
