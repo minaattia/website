@@ -5,15 +5,15 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "3487244310",
+    "hash" : "3175205741",
     "id" : "784D151F",
-    "lastKnownWriteTime" : 1576409980,
-    "last_content_update" : 1576409980225,
+    "lastKnownWriteTime" : 1576411226,
+    "last_content_update" : 1576411226624,
     "path" : "~/Desktop/website/content/blog/2019-12-15-rstudio-and-python.Rmd",
     "project_path" : "content/blog/2019-12-15-rstudio-and-python.Rmd",
     "properties" : {
-        "cursorPosition" : "21,54",
-        "scrollLine" : "9"
+        "cursorPosition" : "15,0",
+        "scrollLine" : "4"
     },
     "read_only" : false,
     "read_only_alternatives" : [

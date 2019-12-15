@@ -4,3 +4,6 @@ blogdown::install_hugo()
 blogdown::new_site(theme="nurlansu/hugo-sustain", theme_example = T)
 
 blogdown::serve_site()
+
+setwd("/Users/minaattia")
+
