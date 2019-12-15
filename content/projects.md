@@ -8,7 +8,7 @@ tags:
 title: Projects
 ---
 
-##Projects
+## Projects
 
 Here are some projects I have been working on:
 

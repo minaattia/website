@@ -1,24 +1,24 @@
 {
     "collab_server" : "",
     "contents" : "",
-    "created" : 1576403739815.000,
+    "created" : 1576408950387.000,
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "2389654205",
-    "id" : "5CBEB204",
-    "lastKnownWriteTime" : 1576403835,
-    "last_content_update" : 1576403835771,
+    "hash" : "3487244310",
+    "id" : "784D151F",
+    "lastKnownWriteTime" : 1576409980,
+    "last_content_update" : 1576409980225,
     "path" : "~/Desktop/website/content/blog/2019-12-15-rstudio-and-python.Rmd",
     "project_path" : "content/blog/2019-12-15-rstudio-and-python.Rmd",
     "properties" : {
-        "cursorPosition" : "10,3",
-        "scrollLine" : "0"
+        "cursorPosition" : "21,54",
+        "scrollLine" : "9"
     },
     "read_only" : false,
     "read_only_alternatives" : [
     ],
-    "relative_order" : 7,
+    "relative_order" : 6,
     "source_on_save" : false,
     "source_window" : "",
     "type" : "r_markdown"

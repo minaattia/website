@@ -17,7 +17,8 @@
       <pubDate>Sun, 15 Dec 2019 00:00:00 +0000</pubDate>
       
       <guid>/blog/rstudio-and-python/</guid>
-      <description></description>
+      <description>In SDS 348, I have used RStudio to analyze a dataset that contained information about lung cancer patients who were veterans.
+The last unit of the class explored Python, a commonly used programming language. I personally really like Python because it is very user friendly and allowed me to gain practical skills in the realm of programming. Python can do many things, including constructing plots and figures. For example, examine the figure below.</description>
     </item>
     
   </channel>
