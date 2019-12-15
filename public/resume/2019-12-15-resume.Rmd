@@ -8,7 +8,11 @@ tags: []
 description: ''
 ---
 
+## About me: 
+
 My name is Mina Attia and I was born in Alexandria, Egypt. At age 11, I immigrated to the US and have been residing in Texas. My edcuational background is concentrated in the biological sciences and business. My interests include medicine, entrepreneurship, and politics. My work experience includes pharmacokinetics research, phlebotomy, and retail. My skills range from being trilingual (Arabic, English, French) to my ability to teamwork effectively. Some of my accomplishments include research  and educational awards.
+
+## Resume
 
 Mina Attia
 
