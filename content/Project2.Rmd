@@ -1,0 +1,285 @@
+---
+title: 'Project 2: Modeling, Testing, and Predicting'
+author: "Mina Attia"
+date: '11/22/2019'
+output:
+  pdf_document:
+    toc: yes
+  html_document:
+    toc: yes
+    toc_float:
+      collapsed: no
+      smooth_scroll: yes
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+hook_output = knit_hooks$get('output')
+knit_hooks$set(output = function(x, options) {
+  # this hook is used only when the linewidth option is not NULL
+  if (!is.null(n <- options$linewidth)) {
+    x = knitr:::split_lines(x)
+    # any lines wider than n should be wrapped
+    if (any(nchar(x) > n)) x = strwrap(x, width = n)
+    x = paste(x, collapse = '\n')
+  }
+  hook_output(x, options)
+})
+
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE,fig.align="center",warning=FALSE,message=FALSE,fig.width=8, fig.height=5, linewidth=60)
+options(tibble.width = 100,width = 100)
+library(tidyverse)
+```
+
+# Introduction
+
+I chose to work with the veteran dataset since it relates to lung cancer, which is a sector of medicine that interests me. The dataset is the Veterans' Administrations Lung Cancer study and consists of randomized trial for veterans that explores two types of treatment for lung cancer. It contains variables such as cancer cell type, survival time, karno score (higher = better overall health), diagnosis time, age, and prior therapy. The trt variable is either the standard treatment regimen or the test regimen. The celltype variable describes the type of cancerous cell (squamous, smallcell, adeno, or large). The rest of the variables include time (survial time in days), censoring status (dead or alive), karnofspy performance score (quantifies cancer patients' general health and activities of daily life; higher score = better overall response to treatment), diagtime (months from diagnosis to randomisation), age (in years), and prior therary (0=no, 10=yes).
+
+```{R}
+data(package = .packages(all.available = TRUE))
+library(tidyverse)
+library(dplyr)
+library(survival) 
+data("veteran") 
+?veteran
+```
+
+
+```{R}
+##Question 1
+
+manova1<-manova(cbind(diagtime,time,karno,age)~celltype, data=veteran) 
+
+summary(manova1)
+
+summary.aov(manova1)
+
+pairwise.t.test(veteran$time,veteran$celltype, p.adj="none")
+
+veteran%>% group_by(celltype)%>% summarise(mean(time))
+
+a <- 1-((1-0.05)^11)
+a
+
+b<- 0.05/11
+b
+```
+
+The following tets were conducted: 1 MANOVA, 4 ANOVAS, and 6 post-hoc t-tests (11 tests in total). The probability of at least one type I error (if unadjusted) is 0.4311999.  The adjusted significance level (bonferroni correction) is 0.004545455. My MANOVA was significant (p-val=0.004266) and I ran four univariate ANOVA tests, one of which was significant for my time variable (p-value = 0.0001446). Mean survival time differed significantly across different cancer cell types for VA cancer patients (significant difference in mean survival time between squamous and smallcell (p-val = 0.00015) & squamous and adeno cell types (p-val = 0.00046) after adjusting the significance level). The MANOVA assumptions include random sample and independent observations, multivariate normality of DVs, homogeneity of within-group covariance matrices, linear relationships among DVs, no extreme univariate or multivariate outliers, and no multicollinearity; it is very likely that some of these assumptions were too difficult to meet, such as no extreme univariate or multivariate outliers. 
+
+```{R}
+##Question 2
+
+library(vegan)
+
+
+dists<-veteran%>%select(karno, time)%>%dist() 
+
+
+adonis(dists~celltype,data=veteran)
+
+table(veteran$celltype)
+
+SST<- sum(dists^2)/137
+
+SSW<-veteran%>%group_by(celltype)%>%select(karno,time)%>%
+ do(d=dist(.[2:3],"euclidean"))%>%ungroup()%>%
+ summarize(sum(d[[1]]^2)/35 + sum(d[[2]]^2)/48+ sum(d[[3]]^2)/27+sum(d[[4]]^2)/27)%>% pull
+F_obs<-((SST-SSW)/3)/(SSW/133)
+F_obs
+
+Fs<-replicate(1000,{
+new<-veteran%>%mutate(celltype=sample(celltype))
+SST2<- sum(dists^2)/137
+  
+  
+SSW2<-new%>%group_by(celltype)%>%select(karno,time)%>%
+ do(d=dist(.[2:3],"euclidean"))%>%ungroup()%>%
+ summarize(sum(d[[1]]^2)/35 + sum(d[[2]]^2)/48+ sum(d[[3]]^2)/27+sum(d[[4]]^2)/27)%>%pull
+((SST2-SSW2)/3)/(SSW2/133)})
+
+mean(Fs>F_obs)
+
+{hist(Fs,prob = T); abline(v=F_obs, col="red")}
+
+ggplot(veteran,aes(time,fill=celltype))+geom_histogram(bins=7)+facet_wrap(~celltype,ncol=2) +theme(legend.position = "none")
+```
+My null hypothesis is that there is no significant difference in mean survival time (in days) and karnofspy performance scores across different cancerous cell types. My alternative hypothesis is that there is a significant difference in mean survival time (in days) and karnofspy performance scores across different cancerous cell types. My PERMANOVA test displays that there is a significant difference in mean survival time (in days) and karnofspy performance scores across different cancerous cell types (adonis p-val = .001, calculated p-val = 0). My observed F value of 7.204805 is greater than my null distribution of F (reference Histogram of Fs above).
+
+```{R}
+##Question 3
+
+veteran$diagtime_c<-veteran$diagtime-mean(veteran$diagtime) 
+
+
+veteran$karno_c<-veteran$karno-mean(veteran$karno)
+
+fit<-lm(time ~ diagtime_c * karno_c, data=veteran)
+
+summary(fit)
+
+mean<-predict(fit,veteran)
+
+ggplot(veteran,aes(karno_c,diagtime_c))+geom_point()+geom_line(data=veteran,aes(y=mean))
+
+library(lmtest)
+bptest(fit)
+resids<-fit$residuals
+fitvals<-fit$fitted.values
+ggplot()+geom_point(aes(fitvals,resids))+geom_hline(yintercept=0, color='red')
+ggplot()+geom_histogram(aes(resids), bins=20)
+ks.test(resids, "pnorm", mean=0, sd(resids))
+library(sandwich)
+summary(fit)$coef[,1:2]
+
+coeftest(fit, vcov = vcovHC(fit))[,1:2]
+(sum((veteran$time-mean(veteran$time))^2)-sum(fit$residuals^2))/sum((veteran
+$time-mean(veteran$time))^2)
+fitted_2<-lm(time ~ diagtime_c + karno_c, data=veteran)
+summary(fitted_2)
+
+nullfit<-lm(time ~ diagtime_c, data=veteran)
+summary(nullfit)
+
+```
+
+From the model, it is clear that when diagtime and karno scores are 0, survival time is 123.37494 days. For every monthly increase in diag time, survival time increased by 1.09409 days. For every unit increase in karno score, survival time increased by 3.08128 days. For every increase in diag time (by month) and karno score (by single units), survival time increased by 0.04505 days. In reference to my above graphs and tests, it is clear that the assumption for regression (linearity,homoskedsaticity, normality) were not upheld; my predictors graph (karno_c and diagtime_c) and residuals graphs do not appear to be normaly distributed - no even scatter of points up the line and the residuals graph has unequal variance (points fan out towards the right). The robust standard errors are greater than my original standard errors. The proportion of variation in the outcome that my model explains is 0.1493513. My regresssion with interaction indicates that the karno score is a significant predictor (p-val= 4.39e-06).
+
+
+```{R}
+##Question 4
+
+
+samp_distn<-replicate(5000, {
+ boot_dat<-veteran[sample(nrow(veteran),replace=TRUE),]
+ fit3<-lm(time ~ diagtime_c * karno_c,data=boot_dat)
+ coef(fit3)
+})
+
+
+samp_distn%>%t%>%as.data.frame%>%summarize_all(sd)
+
+```
+In terms of the SEs, my boostrapped standard errors are slightly bigger than my original SEs and robust SEs. My p-values do not display any change.
+
+```{R}
+##Question 5
+
+veteran$karnostatus<-ifelse(veteran$karno>50,1,0)
+
+fitted4<-glm(karnostatus~time+age,data=veteran,family=binomial(link="logit"))
+
+coeftest(fitted4)
+
+exp(coef(fitted4))
+
+veteran$predicted<-predict(fitted4, data=veteran, type = "response")
+
+table(predict=as.numeric(veteran$predicted>.5),truth=veteran$karnostatus)%>%addmargins
+
+(31+70)/137
+
+70/85
+
+31/46
+
+70/91
+
+logit<-predict(fitted4)
+
+karnostatus <-factor(veteran$karnostatus, levels = c("0","1
+                                                     "))
+ggplot(veteran, aes(logit,fill=as.factor(karnostatus)))+geom_density(alpha=0.3)+geom_vline(xintercept = 0, lty=2)
+
+
+library(plotROC)
+ggplot(veteran,aes(time,predicted,color=age))+geom_line()
+
+ROCplot<-ggplot(veteran)+geom_roc(aes(d=karnostatus,m=predicted), n.cuts=0)+
+ geom_segment(aes(x=0,xend=1,y=0,yend=1),lty=2)
+ROCplot
+
+
+calc_auc(ROCplot)
+
+class_diag<-function(probs,truth){
+
+tab<-table(factor(probs>.5,levels=c("FALSE","TRUE")),truth)
+acc=sum(diag(tab))/sum(tab)
+sens=tab[2,2]/colSums(tab)[2]
+spec=tab[1,1]/colSums(tab)[1]
+ppv=tab[2,2]/rowSums(tab)[2]
+
+if(is.numeric(truth)==FALSE & is.logical(truth)==FALSE) truth<-as.numeric(truth)-1
+
+ord<-order(probs, decreasing=TRUE)
+probs <- probs[ord]; truth <- truth[ord]
+
+TPR=cumsum(truth)/max(1,sum(truth)) 
+FPR=cumsum(!truth)/max(1,sum(!truth))
+
+dup<-c(probs[-1]>=probs[-length(probs)], FALSE)
+TPR<-c(0,TPR[!dup],1); FPR<-c(0,FPR[!dup],1)
+
+n <- length(TPR)
+auc<- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+
+data.frame(acc,sens,spec,ppv,auc)
+}
+
+set.seed(1234)
+k=10
+data1<-veteran[sample(nrow(veteran)),]
+folds<-cut(seq(1:nrow(veteran)),breaks=k,labels=F)
+diags<-NULL
+for(i in 1:k){
+train<-data1[folds!=i,]
+test<-data1[folds==i,]
+truth<-test$karnostatus
+fit6<- glm(karnostatus~time+age,data=train,family=binomial(link="logit"))
+summary(fit6)
+probs<- predict(fit6, newdata=test, type="response")
+diags<-rbind(diags,class_diag(probs,truth))}
+apply(diags,2,mean)
+```
+Controlling for age, for every unit increase in time (survival time, in days), the odds that a patient's karno score was above 50 increased by a factor of 1.0094107. Controlling for time, for every unit increase in age (in years), the odds that a patient's karno score was above 50 decreased by a factor of 0.9955912. My accuracy (proportion of correct classification) was 0.7372263, my specificity/TNR (proportion of status "0" with correct classification) was 0.673913, my sensitivity/TPR (proportion of status "1" with correct classification) was 0.8235294, my recall/PPV (proportion of pts with predicted of karno score>50 who in actuality had a karno score>50) was 0.7692308. My AUC was 0.7975113, which is considered acceptable for my predictors in predicting if a patient will have a karno score that is greater than 50. My 10 fold CV gave me average out-of-sample Accuracy, Sensitivity, and Recall of 0.7241758, 0.8057720, and 0.7633153, respectively.
+
+
+```{R}
+#Question 6
+
+library(glmnet)
+
+y<-as.matrix(veteran$karno) 
+
+x<-veteran%>%dplyr::select(diagtime, time, age, status, prior)%>%mutate_all(scale)%>%as.matrix
+
+cv<-cv.glmnet(x,y)
+
+LASSO<- glmnet(x,y,lambda = cv$lambda.1se)
+
+coef(LASSO)
+
+set.seed(1234)
+
+k = 10
+dat2 <- veteran[sample(nrow(veteran)), ]
+
+folds <- cut(seq(1:nrow(veteran)), breaks = k, labels = F) 
+
+diags <- NULL
+
+for (i in 1:k) {
+train <- dat2[folds != i, ]
+test <- dat2[folds == i, ]
+fitted7 <- lm(karno ~ time, data = train)
+yhat <- predict(fit6, newdata = test)
+diags <- mean((test$diagtime - yhat)^2) }
+mean(diags)
+
+summary(fitted7)
+```
+
+The only variable that was retained for my situation was the time variable (3.659913) illustrating its signficance in predicting a patient's karno score. My residual standard error was 17.43; this is greater than my 10 fold CV standard error and indicates that this lasso model is not a better fit.
+
+

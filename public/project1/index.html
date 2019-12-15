@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Mina Attia" />
+    <meta name="description" content="Describe your website">
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico">
+    <title>Project 1: Exploratory Data Analysis - Mina Attia</title>
+    <meta name="generator" content="Hugo 0.61.0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="/blog/">BLOG</a></li>
+        
+        <li><a href="/projects/">PROJECTS</a></li>
+        
+        <li><a href="/resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="/project1/">Project 1: Exploratory Data Analysis - Mina Attia</a></strong>
+          </h3>
+        </div>
+        <div class="blog-title">
+          <h4>
+          January 1, 0001
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<div id="introduction" class="section level3">
+<h3>Introduction</h3>
+<p>I chose to work with these two datasets, veteran and cancer, since they are both related to lung cancer, which is a sector of medicine that interests me. The veteran dataset consists of randomized trial for veterans that explores two types of treatment for lung cancer. It contains variables such as cancer cell type, survival time, karno score (higher = better overall health), diagnosis time, age, and prior therapy. I chose to join this dataset with the cancer dataset which explains survival times in days in patients with advanced lung cancer. This dataset includes similar variables to the one above, with the addition of variables that track weight loss, caloric intake, and karno scores that are both reported by the patient and physician. I expect to see some associations based on age; for example, I might see that as age increases, treatment outcomes, as detailed by the karno scores, are poorer.</p>
+<pre class="r"><code>data(package = .packages(all.available = TRUE))</code></pre>
+<pre><code>## Warning in data(package = .packages(all.available = TRUE)): datasets have been
+## moved from package &#39;base&#39; to package &#39;datasets&#39;</code></pre>
+<pre><code>## Warning in data(package = .packages(all.available = TRUE)): datasets have been
+## moved from package &#39;stats&#39; to package &#39;datasets&#39;</code></pre>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ─────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──</code></pre>
+<pre><code>## ✓ ggplot2 3.2.1     ✓ purrr   0.3.3
+## ✓ tibble  2.1.3     ✓ dplyr   0.8.3
+## ✓ tidyr   1.0.0     ✓ stringr 1.4.0
+## ✓ readr   1.3.1     ✓ forcats 0.4.0</code></pre>
+<pre><code>## ── Conflicts ────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(dplyr)
+library(survival)
+data(&quot;cancer&quot;)
+data(&quot;veteran&quot;)
+?cancer
+?veteran
+
+joined_data &lt;- cancer %&gt;% inner_join(veteran, by=&quot;age&quot;)
+head(joined_data)</code></pre>
+<pre><code>##   inst time.x status.x age sex ph.ecog ph.karno pat.karno meal.cal wt.loss trt
+## 1    3    455        2  68   1       0       90        90     1225      15   1
+## 2    3    455        2  68   1       0       90        90     1225      15   1
+## 3    3    455        2  68   1       0       90        90     1225      15   1
+## 4    3    455        2  68   1       0       90        90     1225      15   1
+## 5    3    455        2  68   1       0       90        90     1225      15   2
+## 6    3    455        2  68   1       0       90        90     1225      15   2
+##    celltype time.y status.y karno diagtime prior
+## 1  squamous    110        1    80       29     0
+## 2 smallcell     22        1    60        4     0
+## 3 smallcell    392        1    40        4     0
+## 4     large     12        1    40       12    10
+## 5 smallcell      8        1    80        2     0
+## 6     large    164        1    70       15    10</code></pre>
+<p>I merged my datasets using the inner_join function by the variable age in order to merge the two datasets based on common ages. This will allow to extrapolate trends primarily based on age and how that variable relates to other variables.</p>
+<pre class="r"><code>age_karno &lt;-  joined_data %&gt;% group_by(age) %&gt;%  summarize(count = n(), max_karno = max(ph.karno), min_karno = min(ph.karno)) %&gt;% filter(count &gt; 10) %&gt;% arrange(desc(age)) 
+
+age_karno</code></pre>
+<pre><code>## # A tibble: 18 x 4
+##      age count max_karno min_karno
+##    &lt;dbl&gt; &lt;int&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+##  1    72    14        90        60
+##  2    71    21       100        60
+##  3    70    50       100        60
+##  4    69    66       100        60
+##  5    68    60       100        60
+##  6    67    48        90        70
+##  7    66    49        90        70
+##  8    65    56       100        70
+##  9    64    77        90        70
+## 10    63   132       100        50
+## 11    62    70        NA        NA
+## 12    61    20       100        70
+## 13    60    77       100        50
+## 14    58    24       100        80
+## 15    55    18       100        70
+## 16    53    27        90        70
+## 17    50    18       100        60
+## 18    48    12        90        60</code></pre>
+<p>I created age_karno to describe the karno scores (which quantify cancer patients’ general well-being and activities of daily life) based on age. To do that, I grouped by age and I wanted to see the number of patients within each age interval so I used the count function. To see the minimum and maximum karno scores that were reported by the physician, I used the max and min function within summarize. I then filtered the dataset to only include age groups with more than 10 patients to provide more reliable data and arragned it by descending age.</p>
+<pre class="r"><code>joined_data &lt;- joined_data %&gt;% dplyr::select(-meal.cal, -inst) %&gt;% mutate(karnratio=ph.karno/pat.karno)
+
+less_data &lt;- joined_data %&gt;% dplyr::select(3,4,8,10,14,15,16)
+summary(less_data)</code></pre>
+<pre><code>##       age             sex           wt.loss             celltype  
+##  Min.   :39.00   Min.   :1.000   Min.   :-15.000   squamous :238  
+##  1st Qu.:60.00   1st Qu.:1.000   1st Qu.:  0.000   smallcell:333  
+##  Median :63.00   Median :1.000   Median :  5.000   adeno    :182  
+##  Mean   :62.73   Mean   :1.389   Mean   :  8.731   large    :160  
+##  3rd Qu.:67.00   3rd Qu.:2.000   3rd Qu.: 15.000                  
+##  Max.   :81.00   Max.   :2.000   Max.   : 68.000                  
+##                                  NA&#39;s   :68                       
+##     diagtime          prior          karnratio    
+##  Min.   : 1.000   Min.   : 0.000   Min.   :0.700  
+##  1st Qu.: 3.000   1st Qu.: 0.000   1st Qu.:0.900  
+##  Median : 5.000   Median : 0.000   Median :1.000  
+##  Mean   : 8.955   Mean   : 2.859   Mean   :1.050  
+##  3rd Qu.:11.000   3rd Qu.:10.000   3rd Qu.:1.143  
+##  Max.   :87.000   Max.   :10.000   Max.   :2.333  
+##                                    NA&#39;s   :19</code></pre>
+<pre class="r"><code>less_data %&gt;% summarize_all(mean,na.rm=T)</code></pre>
+<pre><code>## Warning in mean.default(celltype, na.rm = TRUE): argument is not numeric or
+## logical: returning NA</code></pre>
+<pre><code>##        age      sex  wt.loss celltype diagtime    prior karnratio
+## 1 62.72618 1.388828 8.731361       NA 8.955093 2.858708  1.049557</code></pre>
+<pre class="r"><code>var(less_data)</code></pre>
+<pre><code>## Warning in var(less_data): NAs introduced by coercion</code></pre>
+<pre><code>##                  age          sex wt.loss celltype      diagtime       prior
+## age       38.5323951 -0.315562489      NA       NA  -6.640599479 -3.65715253
+## sex       -0.3155625  0.237901366      NA       NA   0.003225822 -0.02723814
+## wt.loss           NA           NA      NA       NA            NA          NA
+## celltype          NA           NA      NA       NA            NA          NA
+## diagtime  -6.6405995  0.003225822      NA       NA 133.867498703 19.96404277
+## prior     -3.6571525 -0.027238139      NA       NA  19.964042774 20.43725140
+## karnratio         NA           NA      NA       NA            NA          NA
+##           karnratio
+## age              NA
+## sex              NA
+## wt.loss          NA
+## celltype         NA
+## diagtime         NA
+## prior            NA
+## karnratio        NA</code></pre>
+<pre class="r"><code>n_distinct(less_data)</code></pre>
+<pre><code>## [1] 893</code></pre>
+<pre class="r"><code>summary(less_data$age)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   39.00   60.00   63.00   62.73   67.00   81.00</code></pre>
+<pre class="r"><code>sd(less_data$age)</code></pre>
+<pre><code>## [1] 6.207447</code></pre>
+<pre class="r"><code>summary(less_data$wt.loss)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
+## -15.000   0.000   5.000   8.731  15.000  68.000      68</code></pre>
+<pre class="r"><code>sd(less_data$wt.loss)</code></pre>
+<pre><code>## [1] NA</code></pre>
+<pre class="r"><code>summary(less_data$diagtime)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   1.000   3.000   5.000   8.955  11.000  87.000</code></pre>
+<pre class="r"><code>sd(less_data$diagtime)</code></pre>
+<pre><code>## [1] 11.57011</code></pre>
+<pre class="r"><code>summary(less_data$prior)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   0.000   0.000   0.000   2.859  10.000  10.000</code></pre>
+<pre class="r"><code>sd(less_data$prior)</code></pre>
+<pre><code>## [1] 4.520758</code></pre>
+<pre class="r"><code>summary(less_data$karnratio)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
+##   0.700   0.900   1.000   1.050   1.143   2.333      19</code></pre>
+<pre class="r"><code>sd(less_data$karnratio,na.rm=T)</code></pre>
+<pre><code>## [1] 0.2025005</code></pre>
+<pre class="r"><code>cor_data &lt;- less_data %&gt;% dplyr::select(-celltype)
+cor(cor_data)</code></pre>
+<pre><code>##                  age          sex wt.loss     diagtime       prior karnratio
+## age        1.0000000 -0.104225480      NA -0.092460601 -0.13032233        NA
+## sex       -0.1042255  1.000000000      NA  0.000571616 -0.01235287        NA
+## wt.loss           NA           NA       1           NA          NA        NA
+## diagtime  -0.0924606  0.000571616      NA  1.000000000  0.38168024        NA
+## prior     -0.1303223 -0.012352866      NA  0.381680237  1.00000000        NA
+## karnratio         NA           NA      NA           NA          NA         1</code></pre>
+<p>Here, I ran my descriptive statistics. I first created a subset of my data that only includes numberic variables. Then, I calculated the min, max, quantiles, median, sd, var, and coorelation between the different variables. An interesting finding from the coorelation matrix above is that there is a positive coorelation between prior treatment and time from diagnosis to treatment. This was not something I expecteed because patients who have previously been treated for cancer usually visit the doctor and receive medical tests more often. There was also a minor negative coorelation between age and prior treatment, meaning that older patients were more likely to recieve more timely treatment.</p>
+<pre class="r"><code>library(ggplot2)
+plot1 &lt;- ggplot(data = less_data, aes(x = age, y = wt.loss, color=prior)) + geom_point(size=2)
+plot1 + ggtitle(&quot;Weight loss vs Age in Lung Cancer Studies&quot;) + ylab(&quot;Weight loss&quot;) + xlab(&quot;Age&quot;) </code></pre>
+<pre><code>## Warning: Removed 68 rows containing missing values (geom_point).</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<pre class="r"><code>plot2 &lt;- ggplot(less_data, aes(x = age, y = diagtime))+
+  geom_bar(stat=&quot;summary&quot;,fun.y=&quot;mean&quot;)+
+  geom_errorbar(stat=&quot;summary&quot;) 
+plot2 + ggtitle(&quot;Diagnosis time vs Age in Lung Cancer Studies&quot;) + ylab(&quot;Diagnosis Time&quot;) + xlab(&quot;Age&quot;) </code></pre>
+<pre><code>## No summary function supplied, defaulting to `mean_se()</code></pre>
+<pre><code>## Warning: Removed 4 rows containing missing values (geom_errorbar).</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-4-2.png" width="672" /></p>
+<pre class="r"><code>plot3 &lt;- ggplot(data = less_data, aes(x = diagtime, y = age, color = prior)) +  
+  geom_point(size=2)
+plot3 + ggtitle(&quot;Age vs Diagnosis time in relation to past treatment&quot;) + ylab(&quot;Age&quot;) + xlab(&quot;Diagnosis Time&quot;) </code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-4-3.png" width="672" /></p>
+<pre class="r"><code>plot4 &lt;- ggplot(data = less_data, aes(x = celltype, y = diagtime, color=age)) +  
+  geom_point(size=2)
+plot4 + ggtitle(&quot;Diagnosis time by Cell Type in relation to Age&quot;) + ylab(&quot;Diagnosis Time&quot;) + xlab(&quot;Cell Type&quot;) </code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-4-4.png" width="672" /></p>
+<p>The first plot shows the association between age and weight loss based on prior treatment. There isn’t really an association between these variables but it seems that certain age groups are more likely to have had prior treatment. The second plot reveals that people who were 59 years old had the highest diagnosis time out of all ages. On avearage, diagnosis time decreased somwehat as age increased. The third plot reveals that patients with no prior treatment were more likely to have lower diagnosis times (it could be that patients who had prior thought they were now less susceptive to recurrent cancer). The last plot shows that patients diagnosed with large cancerous cell masses had the lowest diganosis times, which makes sense they would be in the greatest need of treatment.</p>
+<pre class="r"><code>pca_data &lt;- less_data %&gt;% dplyr::select(-sex, -celltype, -prior)
+pc &lt;- princomp(na.omit(pca_data), cor = TRUE, scores = T)
+summary(pc, loadings=T)</code></pre>
+<pre><code>## Importance of components:
+##                           Comp.1    Comp.2    Comp.3    Comp.4
+## Standard deviation     1.0538430 1.0340387 0.9629690 0.9449177
+## Proportion of Variance 0.2776463 0.2673090 0.2318273 0.2232174
+## Cumulative Proportion  0.2776463 0.5449553 0.7767826 1.0000000
+## 
+## Loadings:
+##           Comp.1 Comp.2 Comp.3 Comp.4
+## age        0.619  0.304  0.461  0.558
+## wt.loss    0.482 -0.482 -0.674  0.285
+## diagtime  -0.513 -0.518  0.269  0.629
+## karnratio -0.348  0.638 -0.511  0.460</code></pre>
+<pre class="r"><code>plot(pc)</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<pre class="r"><code>eigval&lt;-pca_data$sdev^2 
+varprop=round(eigval/sum(eigval),2) 
+
+round(cumsum(eigval)/sum(eigval),2) </code></pre>
+<pre><code>## numeric(0)</code></pre>
+<pre class="r"><code>eigval</code></pre>
+<pre><code>## numeric(0)</code></pre>
+<pre class="r"><code>biplot(pc)</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-5-2.png" width="672" />
+Component 1 had the highest proportion of variance at 0.278 and reflects around 28% of the variation in the data. Component 2 had the second highest proportion of variation. The noise that is seeen in the plot is the number of variations. The plot shows that the variables have around equal variation (all pointing in different directions).</p>
+<p>I tried to tidy my less_data using pivot_longer but I kept receiving numerous errors. The display of that data seemed to be easy to look at so I chose to continue with it.</p>
+<p>…</p>
+</div>
+
+              <hr>
+              <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div>
+            </div>
+          </div>
+          <hr>
+        <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+        </div>
+      </div>
+      
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="/js/docs.min.js"></script>
+<script src="/js/main.js"></script>
+
+<script src="/js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

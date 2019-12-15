@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Mina Attia</title>
+    <link>/</link>
+    <description>Recent content on Mina Attia</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Sun, 15 Dec 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>RStudio and Python</title>
+      <link>/blog/rstudio-and-python/</link>
+      <pubDate>Sun, 15 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/rstudio-and-python/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Projects</title>
+      <link>/projects/</link>
+      <pubDate>Sun, 02 Oct 2016 22:55:05 -0400</pubDate>
+      
+      <guid>/projects/</guid>
+      <description>##Projects
+Here are some projects I have been working on:
+  Project 1
+  Project 2
+  </description>
+    </item>
+    
+    <item>
+      <title>Project 1: Exploratory Data Analysis - Mina Attia</title>
+      <link>/project1/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/project1/</guid>
+      <description>Introduction I chose to work with these two datasets, veteran and cancer, since they are both related to lung cancer, which is a sector of medicine that interests me. The veteran dataset consists of randomized trial for veterans that explores two types of treatment for lung cancer. It contains variables such as cancer cell type, survival time, karno score (higher = better overall health), diagnosis time, age, and prior therapy.</description>
+    </item>
+    
+    <item>
+      <title>Project 2: Modeling, Testing, and Predicting</title>
+      <link>/project2/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/project2/</guid>
+      <description>Introduction I chose to work with the veteran dataset since it relates to lung cancer, which is a sector of medicine that interests me. The dataset is the Veterans’ Administrations Lung Cancer study and consists of randomized trial for veterans that explores two types of treatment for lung cancer. It contains variables such as cancer cell type, survival time, karno score (higher = better overall health), diagnosis time, age, and prior therapy.</description>
+    </item>
+    
+  </channel>
+</rss>

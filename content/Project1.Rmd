@@ -1,0 +1,130 @@
+---
+title: 'Project 1: Exploratory Data Analysis - Mina Attia'
+author: "Mina Attia"
+date: "10/10/2019"
+output:
+  html_document:
+    toc: yes
+    toc_float:
+      collapsed: no
+      smooth_scroll: yes
+  pdf_document:
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+### Introduction
+I chose to work with these two datasets, veteran and cancer, since they are both related to lung cancer, which is a sector of medicine that interests me. The veteran dataset consists of randomized trial for veterans that explores two types of treatment for lung cancer. It contains variables such as cancer cell type, survival time, karno score (higher = better overall health), diagnosis time, age, and prior therapy. I chose to join this dataset with the cancer dataset which explains survival times in days in patients with advanced lung cancer. This dataset includes similar variables to the one above, with the addition of variables that track weight loss, caloric intake, and karno scores that are both reported by the patient and physician. I expect to see some associations based on age; for example, I might see that as age increases, treatment outcomes, as detailed by the karno scores, are poorer.
+
+
+
+```{r}
+data(package = .packages(all.available = TRUE))
+library(tidyverse)
+library(dplyr)
+library(survival)
+data("cancer")
+data("veteran")
+?cancer
+?veteran
+
+joined_data <- cancer %>% inner_join(veteran, by="age")
+head(joined_data)
+    
+```
+
+I merged my datasets using the inner_join function by the variable age in order to merge the two datasets based on common ages. This will allow to extrapolate trends primarily based on age and how that variable relates to other variables.
+
+```{r}
+
+age_karno <-  joined_data %>% group_by(age) %>%  summarize(count = n(), max_karno = max(ph.karno), min_karno = min(ph.karno)) %>% filter(count > 10) %>% arrange(desc(age)) 
+
+age_karno
+
+```
+
+I created age_karno to describe the karno scores (which quantify cancer patients' general well-being and activities of daily life) based on age. To do that, I grouped by age and I wanted to see the number of patients within each age interval so I used the count function. To see the minimum and maximum karno scores that were reported by the physician, I used the max and min function within summarize. I then filtered the dataset to only include age groups with more than 10 patients to provide more reliable data and arragned it by descending age.
+
+```{r}
+joined_data <- joined_data %>% dplyr::select(-meal.cal, -inst) %>% mutate(karnratio=ph.karno/pat.karno)
+
+less_data <- joined_data %>% dplyr::select(3,4,8,10,14,15,16)
+summary(less_data)
+less_data %>% summarize_all(mean,na.rm=T)
+var(less_data)
+n_distinct(less_data)
+
+summary(less_data$age)
+sd(less_data$age)
+
+summary(less_data$wt.loss)
+sd(less_data$wt.loss)
+
+summary(less_data$diagtime)
+sd(less_data$diagtime)
+
+summary(less_data$prior)
+sd(less_data$prior)
+
+summary(less_data$karnratio)
+sd(less_data$karnratio,na.rm=T)
+
+cor_data <- less_data %>% dplyr::select(-celltype)
+cor(cor_data)
+    
+```
+
+Here, I ran my descriptive statistics. I first created a subset of my data that only includes numberic variables. Then, I calculated the min, max, quantiles, median, sd, var, and coorelation between the different variables. An interesting finding from the coorelation matrix above is that there is a positive coorelation between prior treatment and time from diagnosis to treatment. This was not something I expecteed because patients who have previously been treated for cancer  usually visit the doctor and receive medical tests more often. There was also a minor negative coorelation between age and prior treatment, meaning that older patients were more likely to recieve more timely treatment.
+
+```{r}
+library(ggplot2)
+plot1 <- ggplot(data = less_data, aes(x = age, y = wt.loss, color=prior)) + geom_point(size=2)
+plot1 + ggtitle("Weight loss vs Age in Lung Cancer Studies") + ylab("Weight loss") + xlab("Age") 
+
+plot2 <- ggplot(less_data, aes(x = age, y = diagtime))+
+  geom_bar(stat="summary",fun.y="mean")+
+  geom_errorbar(stat="summary") 
+plot2 + ggtitle("Diagnosis time vs Age in Lung Cancer Studies") + ylab("Diagnosis Time") + xlab("Age") 
+
+plot3 <- ggplot(data = less_data, aes(x = diagtime, y = age, color = prior)) +  
+  geom_point(size=2)
+plot3 + ggtitle("Age vs Diagnosis time in relation to past treatment") + ylab("Age") + xlab("Diagnosis Time") 
+
+plot4 <- ggplot(data = less_data, aes(x = celltype, y = diagtime, color=age)) +  
+  geom_point(size=2)
+plot4 + ggtitle("Diagnosis time by Cell Type in relation to Age") + ylab("Diagnosis Time") + xlab("Cell Type") 
+```
+    
+The first plot shows the association between age and weight loss based on prior treatment. There isn't really an association between these variables but it seems that certain age groups are more likely to have had prior treatment. The second plot reveals that people who were 59 years old had the highest diagnosis time out of all ages. On avearage, diagnosis time decreased somwehat as age increased. The third plot reveals that patients with no prior treatment were more likely to have lower diagnosis times (it could be that patients who had prior thought they were now less susceptive to recurrent cancer). The last plot shows that patients diagnosed with large cancerous cell masses had the lowest diganosis times, which makes sense they would be in the greatest need of treatment.
+
+```{r}
+pca_data <- less_data %>% dplyr::select(-sex, -celltype, -prior)
+pc <- princomp(na.omit(pca_data), cor = TRUE, scores = T)
+summary(pc, loadings=T)
+plot(pc)
+
+eigval<-pca_data$sdev^2 
+varprop=round(eigval/sum(eigval),2) 
+
+round(cumsum(eigval)/sum(eigval),2) 
+eigval
+biplot(pc)
+
+```
+Component 1 had the highest proportion of variance at 0.278 and reflects around 28% of the variation in the data. Component 2 had the second highest proportion of variation. The noise that is seeen in the plot is the number of variations. The plot shows that the variables have around equal variation (all pointing in different directions).
+
+
+```{r}
+```
+I tried to tidy my less_data using pivot_longer but I kept receiving numerous errors. The display of that data seemed to be easy to look at so I chose to continue with it.
+
+...
+
+
+
+
+
